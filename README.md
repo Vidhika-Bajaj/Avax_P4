@@ -2,8 +2,8 @@
 The purpose of this token contract programme is to develop an ERC20 token for Degen Gaming and deploy it on the Avalanche network along with the functionality listed in the project requirements.
 ## Description
 
-This program is a simple token contract for creating a ERC20 token for deploying it on the avalanche network for degen gaming. It contains the following functionalities for the degen token that are- Minting new tokens, to create new tokens and distribute them to players as rewards along with the condition that only the owner can mint tokens; Transferring tokens,  so that the players should be able to transfer their tokens to others; Redeeming tokens, so that players should be able to redeem their tokens for items in the in-game store; Checking token balance, players should be able to check their token balance at any time; Burning tokens, so that anyone should be able to burn tokens, that they own, that are no longer needed.
-Also, for tracking the functionalities of the various functions, snowtrace testnet will be used via pasting the corresponding account address. Environment used in this project is injected provider.
+This programme is a straightforward token contract for producing an ERC20 token that will be used for degenerate gambling on the avalanche network. The following functions are included for the degen token: creating new tokens, with the restriction that only the owner may mint new tokens, and distributing them to players as rewards; transferring tokens to enable participants to trade their tokens with other people; redeemed tokens, allowing users to exchange their tokens for goods in the in-game shop; Having access to their token balance at all times, players should be able to check their token balance; Burning tokens makes it possible for anyone to get rid of any extra ones they may have.
+Additionally, the matching account address will be pasted into the snowtrace testnet to track the functionality of the various functions. This project uses an injected provider as its environment.
 
 ## Getting Started
 ### Executing program
