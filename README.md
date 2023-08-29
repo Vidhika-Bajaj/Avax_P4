@@ -1,4 +1,4 @@
-# Degen N Token
+# MyDegenToken
 The purpose of this token contract programme is to develop an ERC20 token for Degen Gaming and deploy it on the Avalanche network along with the functionality listed in the project requirements.
 ## Description
 
@@ -12,43 +12,33 @@ Additionally, the matching account address will be pasted into the snowtrace tes
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-interface IERC20 {
-    function totalSupply() external view returns (uint256);
-    function balanceOf(address account) external view returns (uint256);
-    function transfer(address recipient, uint256 amount) external returns (bool);
-    function allowance(address owner, address spender) external view returns (uint256);
-    function approve(address spender, uint256 amount) external returns (bool);
-    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
-    function mint(address account, uint256 amount) external returns (bool);
-    function burn(uint256 amount) external returns (bool);
-    function redeem() external returns (bool);
-}
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract Degen_N_Token is IERC20 {
-    string public name;
-    string public symbol;
- 
-    uint256 private _totalSupply;
+contract MyDegenToken is IERC20 {
+    string public name = "MyCustomToken";
+    string public symbol = "MCT";
+    uint8 public decimals = 0;
+    uint256 private _totalSupply = 0;
     mapping(address => uint256) private _balances;
     mapping(address => mapping(address => uint256)) private _allowances;
     address private _owner;
-    
-    event Transfer(address indexed from, address indexed to, uint256 value);
-    event Approval(address indexed owner, address indexed spender, uint256 value);
+
+    // Store
+    mapping(uint256 => uint256) private _itemPrices;
+    uint256 private _itemCount = 0;
+
     event Mint(address indexed account, uint256 amount);
     event Burn(address indexed account, uint256 amount);
     event Redeem(address indexed account, uint256 amount);
+    event AddItem(uint256 itemId, uint256 price);
+    event BuyItem(address indexed buyer, uint256 itemId);
 
     modifier onlyOwner() {
         require(msg.sender == _owner, "Only the owner can perform this action");
         _;
     }
 
-    constructor(string memory NtokenName, string memory NtokenSymbol, uint256 initialSupply) {
-        name = NtokenName;
-        symbol = NtokenSymbol;
-    
-        _totalSupply = initialSupply;
+    constructor() {
         _balances[msg.sender] = _totalSupply;
         _owner = msg.sender;
         emit Transfer(address(0), msg.sender, _totalSupply);
@@ -84,7 +74,7 @@ contract Degen_N_Token is IERC20 {
         return true;
     }
 
-    function mint(address account, uint256 amount) external override onlyOwner returns (bool) {
+    function mint(address account, uint256 amount) external onlyOwner returns (bool) {
         require(account != address(0), "ERC20: mint to the zero address");
         _totalSupply += amount;
         _balances[account] += amount;
@@ -93,7 +83,7 @@ contract Degen_N_Token is IERC20 {
         return true;
     }
 
-    function burn(uint256 amount) external override returns (bool) {
+    function burn(uint256 amount) external returns (bool) {
         require(amount <= _balances[msg.sender], "ERC20: burn amount exceeds balance");
         _balances[msg.sender] -= amount;
         _totalSupply -= amount;
@@ -102,7 +92,7 @@ contract Degen_N_Token is IERC20 {
         return true;
     }
 
-    function redeem() external override returns (bool) {
+    function redeem() external returns (bool) {
         uint256 amount = _balances[msg.sender];
         require(amount > 0, "ERC20: redeem amount is zero");
         _balances[msg.sender] = 0;
@@ -129,7 +119,41 @@ contract Degen_N_Token is IERC20 {
         _allowances[owner][spender] = amount;
         emit Approval(owner, spender, amount);
     }
-}                          
+
+    // Add item to the store
+    function addItem(uint256 price) external onlyOwner {
+        _itemCount++;
+        _itemPrices[_itemCount] = price;
+        emit AddItem(_itemCount, price);
+    }
+
+    // Buy item from the store
+    function buyItem(uint256 itemId) external {
+    require(itemId > 0 && itemId <= _itemCount, "Invalid item ID");
+    require(_itemPrices[itemId] > 0, "Item not available");
+
+    uint256 itemPrice = _itemPrices[itemId];
+    require(_balances[msg.sender] >= itemPrice, "Insufficient balance");
+
+    _balances[msg.sender] -= itemPrice;
+    _totalSupply -= itemPrice;  // Burn the purchased amount
+
+    emit Transfer(msg.sender, address(0), itemPrice);
+    emit BuyItem(msg.sender, itemId);
+}
+
+
+    // Check the price of an item
+    function getItemPrice(uint256 itemId) external view returns (uint256) {
+        require(itemId > 0 && itemId <= _itemCount, "Invalid item ID");
+        return _itemPrices[itemId];
+    }
+
+    // Get the owner's address
+    function getOwner() external view returns (address) {
+        return _owner;
+    }
+}                         
 ```
 To compile the code, click on the "Solidity Compiler" tab in the left-hand sidebar. Make sure the "Compiler" option is set to "0.8.4" (or another compatible version), and then click on the "Compile M_M3_p4.sol" button.
 
